@@ -1,15 +1,20 @@
+
+#include "search.h"
 #include "evaluate.h"
+#include "generate.h"
 #include "types.h"
 
 static const int piece_value[6] = { 100, 300, 300, 500, 900, 1000000 };
-static const int rook_table [64] = {0,   0,   5,  10,  10,   5,   0,   0,
-									0,   0,   5,  10,  10,   5,   0,   0,
-									-5,   0,   5,  10,  10,   5,   0,  -5,
-									-5,   0,   5,  10,  10,   5,   0,  -5,
-									-5,   0,   5,  10,  10,   5,   0,  -5,
-									-5,   0,   5,  10,  10,   5,   0,  -5,
-									5,  10,  10,  10,  10,  10,  10,   5,
-									0,   0,   5,  15,  15,   5,   0,   0 };
+static const int rook_table[64] = {
+    -5, -5,  0,  5,  5,  0, -5, -5,
+    -5,  0,  5, 10, 10,  5,  0, -5,
+    -5,  0,  5, 10, 10,  5,  0, -5,
+    -5,  0,  5, 10, 10,  5,  0, -5,
+    -5,  0,  5, 10, 10,  5,  0, -5,
+    -5,  0,  5, 10, 10,  5,  0, -5,
+     0,  5, 10, 15, 15, 10,  5,  0,
+    -5, -5,  0,  5,  5,  0, -5, -5};
+
 static const int knight_table[64] = {-50, -40, -30, -30, -30, -30, -40, -50,
 									-40, -20,   0,   5,   5,   0, -20, -40,
 									-30,   5,  10,  15,  15,  10,   5, -30,
@@ -61,14 +66,29 @@ int mirror(int square) {
     return (7 - rank) * 8 + file;
 }
 
+
 /*(pawn, knight, bishop, rook, queen, king) */
 int evaluate(const struct position *pos) {
 	int score[2] = { 0, 0 };
 	int square;
+	struct move moves[MAX_MOVES];
+	int count = 0;
+	int j = 0;
+	int white_mobility = 0;
+	int black_mobility = 0;
 
+	count = generate_legal_moves(pos, moves);
+	while (j < count)
+	{
+		if (COLOR(moves[j].from_square) == WHITE) {
+            white_mobility++;
+        } else {
+            black_mobility++;
+        }
+		j++;
+	}
 	for (square = 0; square < 64; square++) {
 		int piece = pos->board[square];
-
 		if (piece != NO_PIECE)
 		{
 			score[COLOR(piece)] += piece_value[TYPE(piece)];
@@ -140,6 +160,8 @@ int evaluate(const struct position *pos) {
 				score[COLOR(piece)] += piece_value[BISHOP] + bishop_table[mirror(square)];
 			}
 		}
+		score[WHITE] += white_mobility * 5;
+   	    score[BLACK] += black_mobility * 5;
 	}
 	return score[pos->side_to_move] - score[1 - pos->side_to_move];
 }
