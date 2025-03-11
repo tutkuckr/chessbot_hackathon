@@ -1,0 +1,35 @@
+/* Add thus ti uci_go ig else statement*/
+	if (pos->side_to_move == 1 && counter < 4)
+	{
+		str = get_black_opening(pos, counter);
+		if (str)
+			strcpy(buffer, str);
+		printf("bestmove %s\n", buffer);
+
+	}
+static char *get_black_opening(const struct position *pos, int *counter)
+{ /*there is something WRONG!!!!*/
+	int i = 0;
+	static char *move[][4] =
+	{{"f2f4", "Nb1Nc3", "g2g3", "Bf1Bg2"},
+	{"Ng1Nf3", "e2e3", "Bc1Bg5", "d2d4"}};
+
+/*Hedgehog defense*/
+	for (i = 16; i <= 23; i++)
+	{
+		if (pos->board[i] != NO_PIECE)
+		{	
+			if (*counter < 4)
+				return (move[0][(*counter)++]);
+		}
+	}
+/*Nimzo*/
+	for (i = 24; i <= 31; i++)
+	{
+		if (pos->board[i] != NO_PIECE)
+		{
+			if (*counter < 4)
+				return(move[1][(*counter)++]);
+		}
+	}
+	return (NULL);
