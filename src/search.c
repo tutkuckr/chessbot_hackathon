@@ -36,11 +36,11 @@ struct search_result minimax(const struct position *pos, int depth) {
 			}
 		}
 	}
-
 	return result;
 }
 
 struct move search(const struct search_info *info) {
 
+	//have if cases for minimax, if time left is low,then go lower depth
 	return minimax(info->pos, 4).move;
 }
