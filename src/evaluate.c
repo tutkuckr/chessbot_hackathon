@@ -51,17 +51,17 @@ static const int bishop_table[64] = {-20, -10, -10, -10, -10, -10, -10, -20,
 									-10,   0,   0,   0,   0,   0,   0, -10,
 									-20, -10, -10, -10, -10, -10, -10, -20};
 
-/// @brief ROW-> (square / 8) square = 56 → rank = 7
-///	COL-> (square % 8) square = 59 → file = 3
-/// @param square 
-/// @return Flip the rank (7 - rank). new square=(flipped rank∗8)+file
+/*@brief ROW-> (square / 8) square = 56 → rank = 7*/
+/*	COL-> (square % 8) square = 59 → file = 3*/
+/* @param square */
+/* @return Flip the rank (7 - rank). new square=(flipped rank∗8)+file */
 int mirror(int square) {
     int rank = square / 8;
     int file = square % 8;
     return (7 - rank) * 8 + file;
 }
 
-// (pawn, knight, bishop, rook, queen, king)
+/*(pawn, knight, bishop, rook, queen, king) */
 int evaluate(const struct position *pos) {
 	int score[2] = { 0, 0 };
 	int square;

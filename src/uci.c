@@ -127,32 +127,35 @@ static void uci_go(const struct position *pos, char *token, char *store) {
 			break;
 		}
 	}
-	if (counter == 0)
+	if (pos->side_to_move == 0)
 	{
-		buffer[0] = 'e';
-		buffer[1] = '2';
-		buffer[2] = 'e';
-		buffer[3] = '4';
-		/*buffer[4] = 'p';*/
-		counter++;
-	}
-	else if (counter == 1)
-	{
-		buffer[0] = 'g';
-		buffer[1] = '1';
-		buffer[2] = 'f';
-		buffer[3] = '3';
-		/*buffer[4] = 'p';*/
-		counter++;
-	}
-	else if (counter == 2)
-	{
-		buffer[0] = 'f';
-		buffer[1] = '1';
-		buffer[2] = 'c';
-		buffer[3] = '4';
-		/*buffer[4] = 'p';*/
-		counter++;
+		if (counter == 0)
+		{
+			buffer[0] = 'e';
+			buffer[1] = '2';
+			buffer[2] = 'e';
+			buffer[3] = '4';
+			/*buffer[4] = 'p';*/
+			counter++;
+		}
+		else if (counter == 1)
+		{
+			buffer[0] = 'g';
+			buffer[1] = '1';
+			buffer[2] = 'f';
+			buffer[3] = '3';
+			/*buffer[4] = 'p';*/
+			counter++;
+		}
+		else if (counter == 2)
+		{
+			buffer[0] = 'f';
+			buffer[1] = '1';
+			buffer[2] = 'c';
+			buffer[3] = '4';
+			/*buffer[4] = 'p';*/
+			counter++;
+		}
 	}
 	else
 	{
