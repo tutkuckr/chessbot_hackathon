@@ -11,7 +11,7 @@
 char	*opening_move_white( const struct position *pos, int counter){
 	const char *opening_moves[] = {
         "e2e4",
-        "g1f3n",
+        "g1f3",
         "f1c4" 
     };
 
@@ -29,8 +29,8 @@ char *opening_move_black(const struct position *pos, int *counter){
 	int line = -1;
 	int i;
 	static char *move[][4] =
-	{{"f2f4", "Nb1c3", "g2g3", "Bf1g2"},
-	{"Ng1f3", "e2e3", "Bc1g5", "d2d4"}};
+	{{"f2f4", "b1c3", "g2g3", "f1g2"},
+	{"g1f3", "e2e3", "c1g5", "d2d4"}};
 
 /*First line Hedgehog*/
 	for (i = 16; i <= 23; i++)

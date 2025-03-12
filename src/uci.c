@@ -9,7 +9,7 @@
 #include <ctype.h>
 #include <stdbool.h>
 
-int counter = 0;
+static int counter = 0;
 
 static char *get_line(FILE *stream) {
 	size_t capacity = 1024;
@@ -93,8 +93,7 @@ static void uci_go(const struct position *pos, char *token, char *store) {
 	struct search_info info;
 	struct move move;
 	char buffer[] = { '\0', '\0', '\0', '\0', '\0', '\0' };
-	int counter = 0;
-	char *str;
+	char *str = NULL;
 
 
 	info.pos = pos;
@@ -130,18 +129,15 @@ static void uci_go(const struct position *pos, char *token, char *store) {
 		}
 	}
 
-	if (pos->side_to_move == 0 && counter < 3)
-	{
-		str = opening_move_white(pos, counter);
-		if (str)
-			strcpy(buffer, str);
+	if (pos->side_to_move == 0 && counter < 3) {
+        str = opening_move_white(pos, counter);
 		counter++;
-	}
-	else if (pos->side_to_move == 1 && counter < 4)
+    } else if (pos->side_to_move == 1 && counter < 4) {
+        str = opening_move_black(pos, &counter);
+    }
+	if (str)
 	{
-		str = opening_move_black(pos, &counter);
-		if (str)
-			strcpy(buffer, str);
+		strcpy(buffer, str);
 	}
 	else
 	{
