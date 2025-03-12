@@ -1,5 +1,7 @@
 #include "evaluate.h"
 #include "types.h"
+#include "generate.h"
+
 
 static const int piece_value[6] = { 100, 300, 300, 500, 900, 1000000 };
 static const int rook_table [64] = {0,   0,   5,  10,  10,   5,   0,   0,
