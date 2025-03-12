@@ -68,77 +68,36 @@ int evaluate(const struct position *pos) {
 
 	for (square = 0; square < 64; square++) {
 		int piece = pos->board[square];
+		int square_val = 0;
 
-		if (piece != NO_PIECE)
-		{
-			score[COLOR(piece)] += piece_value[TYPE(piece)];
-		}
-		else if (piece == PAWN)
-		{
-			if (COLOR(piece) == 0)
-			{
-				score[COLOR(piece)] += piece_value[PAWN] + pawn_table[square];
-			}
-			else
-			{
-				score[COLOR(piece)] += piece_value[PAWN] + pawn_table[mirror(square)];
-			}
-		}
-		else if (piece == QUEEN)
-		{
-			if (COLOR(piece) == 0)
-			{
-				score[COLOR(piece)] += piece_value[QUEEN] + queen_table[square];
-			}
-			else
-			{
-				score[COLOR(piece)] += piece_value[QUEEN] + queen_table[mirror(square)];
-			}
-		}
-		else if (piece == ROOK)
-		{
-			if (COLOR(piece) == 0)
-			{
-				score[COLOR(piece)] += piece_value[ROOK] + rook_table[square];
-			}
-			else
-			{
-				score[COLOR(piece)] += piece_value[ROOK] + rook_table[mirror(square)];
-			}
+		if (COLOR(piece) == 0)
+			square_val = square;
+		else
+			square_val =  mirror(square);
 
-		}
-		else if (piece == KNIGHT)
+		switch (piece)
 		{
-			if (COLOR(piece) == 0)
-			{
-				score[COLOR(piece)] += piece_value[KNIGHT] + knight_table[square];
-			}
-			else
-			{
-				score[COLOR(piece)] += piece_value[KNIGHT] + knight_table[mirror(square)];
-			}
-		}
-		else if (piece == KING)
-		{
-			if (COLOR(piece) == 0)
-			{
-				score[COLOR(piece)] += piece_value[KING] + king_table[square];
-			}
-			else
-			{
-				score[COLOR(piece)] += piece_value[KING] + king_table[mirror(square)];
-			}
-		}
-		else if (piece == BISHOP)
-		{
-			if (COLOR(piece) == 0)
-			{
-				score[COLOR(piece)] += piece_value[BISHOP] + bishop_table[square];
-			}
-			else
-			{
-				score[COLOR(piece)] += piece_value[BISHOP] + bishop_table[mirror(square)];
-			}
+			case NO_PIECE:
+				score[COLOR(piece)] += piece_value[TYPE(piece)];
+				break;
+			case PAWN:
+				score[COLOR(piece)] += piece_value[PAWN] + pawn_table[square_val];
+				break;
+			case QUEEN:
+				score[COLOR(piece)] += piece_value[PAWN] + queen_table[square_val];
+				break;
+			case ROOK:
+				score[COLOR(piece)] += piece_value[PAWN] + rook_table[square_val];
+				break;
+			case KNIGHT:
+				score[COLOR(piece)] += piece_value[PAWN] + knight_table[square_val];
+				break;
+			case KING:
+				score[COLOR(piece)] += piece_value[PAWN] + king_table[square_val];
+				break;
+			case BISHOP:
+				score[COLOR(piece)] += piece_value[PAWN] + bishop_table[square_val];
+				break;
 		}
 	}
 	return score[pos->side_to_move] - score[1 - pos->side_to_move];
