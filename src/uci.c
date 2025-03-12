@@ -136,9 +136,9 @@ static void uci_go(const struct position *pos, char *token, char *store) {
 		if (str)
 			strcpy(buffer, str);
 	}
-	else if (pos->side_to_move == 1 && counter < 4)//black
+	else if (pos->side_to_move == 1 && counter < 4) //black
 	{
-		str = opening_move_black(pos, counter);
+		str = opening_move_black(pos, &counter);
 		if (str)
 			strcpy(buffer, str);
 	}
@@ -157,7 +157,6 @@ static void uci_go(const struct position *pos, char *token, char *store) {
 	}
 	printf("bestmove %s\n", buffer);
 	counter++;
-	
 }
 
 void uci_run(const char *name, const char *author) {

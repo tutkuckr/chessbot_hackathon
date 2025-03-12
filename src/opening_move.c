@@ -14,28 +14,26 @@ char	*opening_move_white( const struct position *pos, int counter){
         "g1f3p",
         "f1c4p" 
     };
-	int i = 0;
 
-	while (i != counter && (i < 3))
-		i++;
-	if (counter == i)
-	{
-		if (counter == 1 && pos->board[35] != NO_PIECE)
-			return (opening_moves[counter]);
-		if (counter == 2 && pos->board[42] != NO_PIECE)
-			return (opening_moves[counter]);
+	if (counter >= 0 && counter < 3) {
+		if (counter == 1 && pos->board[35] == NO_PIECE)
+			return (NULL);
+		if (counter == 2 && pos->board[42] == NO_PIECE)
+			return (NULL);
+		return ((char *)opening_moves[counter]);
 	}
 	return (NULL);
 }
 
 char *opening_move_black(const struct position *pos, int *counter){
 	int line = -1;
+	int i;
 	static char *move[][4] =
 	{{"f2f4", "Nb1c3", "g2g3", "Bf1g2"},
 	{"Ng1f3", "e2e3", "Bc1g5", "d2d4"}};
 
 /*First line Hedgehog*/
-	for (int i = 16; i <= 23; i++)
+	for (i = 16; i <= 23; i++)
 	{
 		if (pos->board[i] != NO_PIECE)
 		{
