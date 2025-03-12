@@ -3,8 +3,10 @@
 #include "generate.h"
 
 #include <limits.h>
+#include <math.h>
+#include <stdio.h>
 
-struct search_result minimax(const struct position *pos, int depth) {
+struct search_result minimax(const struct position *pos, int depth, int alpha, int beta) {
 	struct search_result result;
 
 	result.score = -1000000;
@@ -12,7 +14,10 @@ struct search_result minimax(const struct position *pos, int depth) {
 	if (depth == 0) {
 		/* we have reached our search depth, so evaluate the position.       */
 		result.score = evaluate(pos);
-	} else {
+		return result;
+	}
+	else
+	{
 		struct move moves[MAX_MOVES];
 		size_t count = generate_legal_moves(pos, moves);
 		size_t index;
@@ -26,21 +31,33 @@ struct search_result minimax(const struct position *pos, int depth) {
 			do_move(&copy, moves[index]);
 
 			/* minimax is called recursively. this call returns the score of */
-			/* the opponent, so we must negate it to get our score.          */
-			score = -minimax(&copy, depth - 1).score;
+			/* negamax inputs -beta, -alpha         */
+			score = -minimax(&copy, depth - 1, -beta, -alpha).score;
 
 			/* update the best move if we found a better one.                */
-			if (score > result.score) {
-				result.move = moves[index];
-				result.score = score;
-			}
+			if (score > beta) /*>=: hard, > fail soft*/
+			{
+            	result.score = score;
+            	return result;
+        	}
+        	if (score > result.score) {
+            	result.move = moves[index];
+            	result.score = score;
+        	}
+        	if (score > alpha) {
+           		alpha = score;
+        	}
 		}
 	}
 	return result;
 }
 
 struct move search(const struct search_info *info) {
+	int alpha = INT_MIN;
+	int beta = INT_MAX;
+	int depth = 4;
 
-	//have if cases for minimax, if time left is low,then go lower depth
-	return minimax(info->pos, 4).move;
+	/*if (info->time[WHITE] < info->time[BLACK] && we are white)
+		depth = 2;*/
+	return minimax(info->pos, depth, alpha, beta).move;
 }

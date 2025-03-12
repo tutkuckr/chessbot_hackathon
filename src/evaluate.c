@@ -65,7 +65,22 @@ int mirror(int square) {
 int evaluate(const struct position *pos) {
 	int score[2] = { 0, 0 };
 	int square;
+	struct move moves[MAX_MOVES];
+	int count = 0;
+	int j = 0;
+	int white_mobility = 0;
+	int black_mobility = 0;
 
+	count = generate_legal_moves(pos, moves);
+	while (j < count)
+	{
+		if (COLOR(moves[j].from_square) == WHITE) {
+            white_mobility++;
+        } else {
+            black_mobility++;
+        }
+		j++;
+	}
 	for (square = 0; square < 64; square++) {
 		int piece = pos->board[square];
 		int square_val = 0;
@@ -99,6 +114,8 @@ int evaluate(const struct position *pos) {
 				score[COLOR(piece)] += piece_value[PAWN] + bishop_table[square_val];
 				break;
 		}
+		score[WHITE] += white_mobility * 5;
+   	    score[BLACK] += black_mobility * 5;
 	}
 	return score[pos->side_to_move] - score[1 - pos->side_to_move];
 }
