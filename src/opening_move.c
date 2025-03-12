@@ -16,15 +16,16 @@ char	*opening_move_white( const struct position *pos, int counter){
     };
 	int i = 0;
 
-	while (i != counter && (i < 3))
-		i++;
-	if (counter == i)
+	while (i != counter)
 	{
-		if (counter == 1 && pos->board[35] != NO_PIECE)
-			return (opening_moves[counter]);
-		if (counter == 2 && pos->board[42] != NO_PIECE)
-			return (opening_moves[counter]);
+		i++;
 	}
+	if ()
+
+	if (counter == 0)
+		return (opening_moves[counter]);
+	
+
 	return (NULL);
 }
 

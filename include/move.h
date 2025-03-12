@@ -68,5 +68,7 @@ void do_move(struct position *pos, struct move move);
 /*                                                                           */
 /* https://www.chessprogramming.org/Legal_Move                               */
 int is_legal(const struct position *pos, struct move move);
+char	*opening_move_white( const struct position *pos, int counter);
+char *opening_move_black(const struct position *pos, int *counter);
 
 #endif
