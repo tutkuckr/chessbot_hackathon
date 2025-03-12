@@ -9,7 +9,7 @@
 #include <ctype.h>
 #include <stdbool.h>
 
-int counter = 0;
+static int counter = 0;
 
 static char *get_line(FILE *stream) {
 	size_t capacity = 1024;
@@ -93,6 +93,8 @@ static void uci_go(const struct position *pos, char *token, char *store) {
 	struct search_info info;
 	struct move move;
 	char buffer[] = { '\0', '\0', '\0', '\0', '\0', '\0' };
+	char *str = NULL;
+
 
 	info.pos = pos;
 	info.time[WHITE] = 0;
@@ -122,38 +124,20 @@ static void uci_go(const struct position *pos, char *token, char *store) {
 		} else {
 			token = get_token(token, store);
 		}
-
 		if (!token) {
 			break;
 		}
 	}
-	/*if (pos->side_to_move == 0)*/
-	if (counter == 0)
-	{
-		buffer[0] = 'e';
-		buffer[1] = '2';
-		buffer[2] = 'e';
-		buffer[3] = '4';
-			/*buffer[4] = 'p';*/
+
+	if (pos->side_to_move == 0 && counter < 3) {
+        str = opening_move_white(pos, counter);
 		counter++;
-	}
-	else if (counter == 1)
+    } else if (pos->side_to_move == 1 && counter < 4) {
+        str = opening_move_black(pos, &counter);
+    }
+	if (str)
 	{
-		buffer[0] = 'g';
-		buffer[1] = '1';
-		buffer[2] = 'f';
-		buffer[3] = '3';
-			/*buffer[4] = 'p';*/
-		counter++;
-	}
-	else if (counter == 2)
-	{
-		buffer[0] = 'f';
-		buffer[1] = '1';
-		buffer[2] = 'c';
-		buffer[3] = '4';
-		/*buffer[4] = 'p';*/
-		counter++;
+		strcpy(buffer, str);
 	}
 	else
 	{
