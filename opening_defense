@@ -39,3 +39,4 @@ static char *get_black_opening(const struct position *pos, int *counter)
 	if (line != -1 && *counter < 4)
 		return (move[line][(*counter)++]);
 	return (NULL);
+}

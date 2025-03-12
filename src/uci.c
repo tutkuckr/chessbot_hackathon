@@ -93,6 +93,9 @@ static void uci_go(const struct position *pos, char *token, char *store) {
 	struct search_info info;
 	struct move move;
 	char buffer[] = { '\0', '\0', '\0', '\0', '\0', '\0' };
+	int counter = 0;
+	char *str;
+
 
 	info.pos = pos;
 	info.time[WHITE] = 0;
@@ -122,11 +125,50 @@ static void uci_go(const struct position *pos, char *token, char *store) {
 		} else {
 			token = get_token(token, store);
 		}
-
 		if (!token) {
 			break;
 		}
 	}
+
+	if (pos->side_to_move == 0 && counter < 3) //white - set counter condition
+	{
+		str = opening_move_white(pos, counter);
+		if (str)
+			strcpy(buffer, str);
+	}
+	else if (pos->side_to_move == 1 && counter < 4)//black
+	{
+		str = opening_move_black(pos, counter);
+		if (str)
+			strcpy(buffer, str);
+	}
+	if (!buffer)
+	{
+		move = search(&info);
+
+		buffer[0] = "abcdefgh"[FILE(move.from_square)];
+		buffer[1] = '1' + RANK(move.from_square);
+		buffer[2] = "abcdefgh"[FILE(move.to_square)];
+		buffer[3] = '1' + RANK(move.to_square);
+
+		if (move.promotion_type != NO_TYPE) {
+			buffer[4] = "pnbrqk"[move.promotion_type];
+		}
+	}
+	printf("bestmove %s\n", buffer);
+	counter++;
+
+
+
+
+
+
+
+
+
+
+
+
 	if (counter == 0)
 	{
 		if (pos->side_to_move == 0)
@@ -186,22 +228,26 @@ static void uci_go(const struct position *pos, char *token, char *store) {
 			opening_move_black(info);
 		}
 	}
-	else // if it is not by the book ! change it
-	{
-		move = search(&info);
-
-		buffer[0] = "abcdefgh"[FILE(move.from_square)];
-		buffer[1] = '1' + RANK(move.from_square);
-		buffer[2] = "abcdefgh"[FILE(move.to_square)];
-		buffer[3] = '1' + RANK(move.to_square);
-
-		if (move.promotion_type != NO_TYPE) {
-			buffer[4] = "pnbrqk"[move.promotion_type];
-		}
-	}
-	printf("bestmove %s\n", buffer);
-	counter++;
+	
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 void uci_run(const char *name, const char *author) {
 	char *line;
