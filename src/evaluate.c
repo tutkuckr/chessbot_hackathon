@@ -63,15 +63,44 @@ int mirror(int square) {
     return (7 - rank) * 8 + file;
 }
 
+/*
+How to Improve Your Evaluation Function
+
+    Pawn Chains
+        *Add a bonus for connected pawns.
+			-To check for connected pawns, you need to:
+			Loop through all squares and find pawns.
+			Check if the pawn has a friendly pawn diagonally left or right.
+			Give a bonus if connected, and a penalty if isolated.
+        *Add a penalty for isolated or doubled pawns.
+
+    Rook Placement
+       	*Add a bonus for rooks on open or semi-open files.
+    	*Add a bonus if two rooks are connected.
+
+    Bishop Activity
+        *Add a penalty for bishops trapped by their own pawns.
+        *Add a bonus for fianchetto bishops.
+
+    Tactics (Pins, Forks, Batteries)
+        *Detect if a piece is pinned and penalize that side.
+        *Detect forks and add a bonus for the attacker.
+        *Detect batteries (e.g., Queen and Bishop on b2-g7) and increase evaluation.
+*/
+
+
 /*(pawn, knight, bishop, rook, queen, king) */
 int evaluate(const struct position *pos) {
 	int score[2] = { 0, 0 };
 	int square;
+	int square_val = 0;
 	struct move moves[MAX_MOVES];
 	int count = 0;
 	int j = 0;
 	int white_mobility = 0;
 	int black_mobility = 0;
+	
+	int piece = 0;
 
 	count = generate_legal_moves(pos, moves);
 	while (j < count)
@@ -84,8 +113,7 @@ int evaluate(const struct position *pos) {
 		j++;
 	}
 	for (square = 0; square < 64; square++) {
-		int piece = pos->board[square];
-		int square_val = 0;
+		piece = pos->board[square];
 
 		if (COLOR(piece) == 0)
 			square_val = square;
@@ -101,23 +129,24 @@ int evaluate(const struct position *pos) {
 				score[COLOR(piece)] += piece_value[PAWN] + pawn_table[square_val];
 				break;
 			case QUEEN:
-				score[COLOR(piece)] += piece_value[PAWN] + queen_table[square_val];
+				score[COLOR(piece)] += piece_value[QUEEN] + queen_table[square_val];
 				break;
 			case ROOK:
-				score[COLOR(piece)] += piece_value[PAWN] + rook_table[square_val];
+				score[COLOR(piece)] += piece_value[ROOK] + rook_table[square_val];
 				break;
 			case KNIGHT:
-				score[COLOR(piece)] += piece_value[PAWN] + knight_table[square_val];
+				score[COLOR(piece)] += piece_value[KNIGHT] + knight_table[square_val];
 				break;
 			case KING:
-				score[COLOR(piece)] += piece_value[PAWN] + king_table[square_val];
+				score[COLOR(piece)] += piece_value[KING] + king_table[square_val];
 				break;
 			case BISHOP:
-				score[COLOR(piece)] += piece_value[PAWN] + bishop_table[square_val];
+				score[COLOR(piece)] += piece_value[BISHOP] + bishop_table[square_val];
 				break;
 		}
 		score[WHITE] += white_mobility * 5;
    	    score[BLACK] += black_mobility * 5;
 	}
+	//score[COLOR(piece)] += common_pattern(square_val, *pos);
 	return score[pos->side_to_move] - score[1 - pos->side_to_move];
 }
