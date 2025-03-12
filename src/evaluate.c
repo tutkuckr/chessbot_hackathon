@@ -1,7 +1,7 @@
 #include "evaluate.h"
 #include "types.h"
 #include "generate.h"
-
+#include <stdbool.h>
 
 static const int piece_value[6] = { 100, 300, 300, 500, 900, 1000000 };
 static const int rook_table [64] = {0,   0,   5,  10,  10,   5,   0,   0,
@@ -88,6 +88,95 @@ How to Improve Your Evaluation Function
         *Detect batteries (e.g., Queen and Bishop on b2-g7) and increase evaluation.
 */
 
+ /*Returns 1 if there is a friendly pawn diagonally adjacent*/
+int is_pawn_connected(const struct position *pos, int square, int color) {
+   
+    int file = square % 8;
+
+    /* Check diagonal left except a*/
+    if (file > 0) {
+        int left_diagonal; /* -9 for white, +7 for black*/
+		if (color == WHITE)
+		{
+			left_diagonal = square - 9;
+			if (pos->board[left_diagonal] == WHITE)
+				return 1;
+		}
+				
+		else if (color == BLACK)
+		{
+			left_diagonal = square + 7;
+			if (pos->board[left_diagonal] == BLACK)
+				return 1;
+		}
+				
+    }
+
+    /* Check diagonal right except h*/
+    if (file < 7) {
+        int right_diagonal;  /* -7 for white, +9 for black */
+		if (color == WHITE)
+		{
+			right_diagonal = square - 7;
+			if (pos->board[right_diagonal] == WHITE)
+				return 1;
+		}
+		else if (color == BLACK )
+		{
+			right_diagonal = square + 9;
+			if (pos->board[right_diagonal] == BLACK)
+				return 1;
+		}
+    }
+    return 0;
+}
+
+
+int evaluate_pawn(const struct position *pos, int color) {
+    int score = 0;
+	int square;
+
+    for (square = 0; square < 64; square++) {
+        if (color == WHITE) {
+            if (is_pawn_connected(pos, square, color)) {
+                score += 10; 
+            } else {
+                score -= 15;
+            }
+        }
+        if (color == BLACK) {
+            if (is_pawn_connected(pos, square, color)) {
+                score -= 10; /* for Black, this is negative*/
+            } else {
+                score += 15;
+            }
+        }
+    }
+    return score;
+}
+
+
+int	common_pattern(const struct position *pos, int piece, int color)
+{
+	switch (piece)
+	{
+		case PAWN:
+			return evaluate_pawn(pos, color);
+			break;
+		case QUEEN:
+			break;
+		case ROOK:
+			break;
+		case KNIGHT:
+			break;
+		case KING:
+			break;
+		case BISHOP:
+			break;
+	}
+	return 0;
+}
+
 
 /*(pawn, knight, bishop, rook, queen, king) */
 int evaluate(const struct position *pos) {
@@ -126,7 +215,7 @@ int evaluate(const struct position *pos) {
 				score[COLOR(piece)] += piece_value[TYPE(piece)];
 				break;
 			case PAWN:
-				score[COLOR(piece)] += piece_value[PAWN] + pawn_table[square_val];
+				score[COLOR(piece)] += piece_value[PAWN] + pawn_table[square_val] + common_pattern(pos, PAWN, pos->board[square]);
 				break;
 			case QUEEN:
 				score[COLOR(piece)] += piece_value[QUEEN] + queen_table[square_val];
@@ -147,6 +236,5 @@ int evaluate(const struct position *pos) {
 		score[WHITE] += white_mobility * 5;
    	    score[BLACK] += black_mobility * 5;
 	}
-	//score[COLOR(piece)] += common_pattern(square_val, *pos);
 	return score[pos->side_to_move] - score[1 - pos->side_to_move];
 }
