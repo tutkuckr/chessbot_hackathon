@@ -10,9 +10,9 @@
 
 char	*opening_move_white( const struct position *pos, int counter){
 	const char *opening_moves[] = {
-        "e2e4p",
-        "g1f3p",
-        "f1c4p" 
+        "e2e4",
+        "g1f3n",
+        "f1c4" 
     };
 
 	if (counter >= 0 && counter < 3) {
@@ -44,7 +44,7 @@ char *opening_move_black(const struct position *pos, int *counter){
 /*Second line Nimzo*/
 	if (line == -1)
 	{
-		for (int i = 24; i <= 31; i++)
+		for (i = 24; i <= 31; i++)
 		{
 			if (pos->board[i] != NO_PIECE)
 			{
@@ -56,5 +56,4 @@ char *opening_move_black(const struct position *pos, int *counter){
 	if (line != -1 && *counter < 4)
 		return (move[line][(*counter)++]);
 	return (NULL);
-
 }
