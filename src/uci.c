@@ -141,7 +141,7 @@ static void uci_go(const struct position *pos, char *token, char *store) {
 	}
 	else
 	{
-		move = search(&info);
+		move = search(&info, pos);
 
 		buffer[0] = "abcdefgh"[FILE(move.from_square)];
 		buffer[1] = '1' + RANK(move.from_square);

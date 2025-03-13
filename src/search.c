@@ -98,13 +98,34 @@ struct search_result minimax(const struct position *pos, int depth, int alpha, i
 	return result;
 }
 
-struct move search(const struct search_info *info) {
+int count_piece(const struct position *pos)
+{
+	int counter = 0;
+    int our_color = pos->side_to_move;
+	int i;
+	int piece;
+	for (i = 0; i < 64; i++)
+	{
+		piece = pos->board[i];
+		if (piece != NO_PIECE && COLOR(piece) == our_color)
+			counter++;
+	}
+	return counter;
+}
+
+struct move search(const struct search_info *info, const struct position *pos)
+{
 	int alpha = INT_MIN;
 	int beta = INT_MAX;
-	int depth = 4;
+	int depth;
 	int maximizing_player = (info->pos->side_to_move == WHITE);
-
+	int piece_count = count_piece(pos);
+	if (piece_count <= 8)
+		depth = 6;
+	else
+		depth = 4;
 	/*if (info->time[WHITE] < info->time[BLACK] && we are white)
 		depth = 2;*/
 	return minimax(info->pos, depth, alpha, beta, maximizing_player).move;
 }
+

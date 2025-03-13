@@ -142,6 +142,6 @@ struct search_result minimax(const struct position *pos, int depth, int alpha, i
 /* https://www.chessprogramming.org/Time_Management                          */
 /* https://www.chessprogramming.org/Iterative_Deepening                      */
 /* https://www.chessprogramming.org/Opening_Book                             */
-struct move search(const struct search_info *info);
+struct move search(const struct search_info *info, const struct position *pos);
 
 #endif
