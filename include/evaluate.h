@@ -43,7 +43,7 @@ int evaluate(const struct position *pos);
 
 #endif
 
-/*
+/* black
  8  56 57 58 59 60 61 62 63
  7  48 49 50 51 52 53 54 55
  6  40 41 42 43 44 45 46 47
@@ -53,4 +53,4 @@ int evaluate(const struct position *pos);
  2   8  9 10 11 12 13 14 15
  1   0  1  2  3  4  5  6  7
     a  b  c  d  e  f  g  h
-*/
+*/ /*white*/
