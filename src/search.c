@@ -121,9 +121,9 @@ struct move search(const struct search_info *info, const struct position *pos)
 	int maximizing_player = (info->pos->side_to_move == WHITE);
 	int piece_count = count_piece(pos);
 	if (piece_count <= 8)
-		depth = 6;
+		depth = 8;
 	else
-		depth = 4;
+		depth = 6;
 	/*if (info->time[WHITE] < info->time[BLACK] && we are white)
 		depth = 2;*/
 	return minimax(info->pos, depth, alpha, beta, maximizing_player).move;
