@@ -71,7 +71,6 @@ static const int knight_bonus[64] = {
 									-5,   0,  0,  0,  0,  0,  0,  -5,
 									-10, -5,  0,  0,  0,  0, -5, -10};
 
-
 /*@brief ROW-> (square / 8) square = 56 → rank = 7*/
 /*	COL-> (square % 8) square = 59 → file = 3*/
 /* @param square */
@@ -83,7 +82,7 @@ int mirror(int square) {
 }
 
 /*
-How to Improve Evaluation Function
+How to Improve Your Evaluation Function
 
     Pawn Chains
         *Add a bonus for connected pawns.
@@ -119,18 +118,17 @@ int is_pawn_connected(const struct position *pos, int square, int color) {
 		{
 			left_diagonal = square - 9;
 			if (pos->board[left_diagonal] == WHITE)
-				return 1;
+				return 10;
+			mult = -1;
 		}
-
 		else if (color == BLACK)
 		{
 			left_diagonal = square + 7;
 			if (pos->board[left_diagonal] == BLACK)
 				return -10;
 		}
-
     }
-	if (file < 7) {
+    if (file < 7) {
         int right_diagonal;  /* -7 for white, +9 for black */
 		if (color == WHITE)
 		{
@@ -148,6 +146,7 @@ int is_pawn_connected(const struct position *pos, int square, int color) {
     }
     return 15 * mult;
 }
+
 
 /*Doubled pawns → -10 points per extra pawn on a file.*/
 int	pawn_doubled_or_isolated(const struct position *pos)
@@ -231,6 +230,7 @@ int	common_pattern(const struct position *pos, int piece, int color)
 	return 0;
 }
 
+
 /*(pawn, knight, bishop, rook, queen, king) */
 int evaluate(const struct position *pos) {
 	int score[2] = { 0, 0 };
@@ -277,7 +277,7 @@ int evaluate(const struct position *pos) {
 				score[COLOR(piece)] += piece_value[ROOK] + rook_table[square_val];
 				break;
 			case KNIGHT:
-				score[COLOR(piece)] += piece_value[KNIGHT] + knight_table[square_val] + knight_bonus[square_val] + knight_penalty[square];
+				score[COLOR(piece)] += piece_value[KNIGHT] + knight_table[square_val] + knight_bonus[square_val] + knight_penalty[square];;
 				break;
 			case KING:
 				score[COLOR(piece)] += piece_value[KING] + king_table[square_val];
