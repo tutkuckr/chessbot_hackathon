@@ -32,7 +32,7 @@
 /* some logic to your evaluation function to detect these patterns and       */
 /* change the value of the position accordingly.                             */
 /*                                                                           */
-/* POSSIBLE IMPROVEMENT: mobility score                                      */
+/* POSSIBLE IMPROVEMENT: mobility score                                      *//*DONE*/
 /* the mobility score is a measure of how many moves a player can make. if a */
 /* player has many possible moves, they probably have a strong position.     */
 /*                                                                           */

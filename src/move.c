@@ -114,6 +114,7 @@ void do_move(struct position *pos, struct move move) {
 	}
 }
 
+
 int is_legal(const struct position *pos, struct move move) {
 	struct position copy = *pos;
 	struct move moves[MAX_MOVES];
