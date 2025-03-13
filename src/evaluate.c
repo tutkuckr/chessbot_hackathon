@@ -52,6 +52,25 @@ static const int bishop_table[64] = {-20, -10, -10, -10, -10, -10, -10, -20,
 									-10,   0,   5,  10,  10,   5,   0, -10,
 									-10,   0,   0,   0,   0,   0,   0, -10,
 									-20, -10, -10, -10, -10, -10, -10, -20};
+static const int knight_bonus[64] = {
+									-5, -5, -5, -5, -5, -5, -5, -5,
+									-3,  0,  2,  3,  3,  2,  0, -3,
+									-3,  2,  4,  5,  5,  4,  2, -3,
+									-3,  3,  5,  7,  7,  5,  3, -3,
+									-3,  3,  5,  7,  7,  5,  3, -3,
+									-3,  2,  4,  5,  5,  4,  2, -3,
+									-3,  0,  2,  3,  3,  2,  0, -3,
+									-5, -5, -5, -5, -5, -5, -5, -5};
+ static const int knight_penalty[64] = {
+									-10, -5,  0,  0,  0,  0, -5, -10,
+									-5,   0,  0,  0,  0,  0,  0,  -5,
+									0,   0,  0,  0,  0,  0,  0,   0,
+									0,   0,  0,  0,  0,  0,  0,   0,
+									0,   0,  0,  0,  0,  0,  0,   0,
+									0,   0,  0,  0,  0,  0,  0,   0,
+									-5,   0,  0,  0,  0,  0,  0,  -5,
+									-10, -5,  0,  0,  0,  0, -5, -10};
+
 
 /*@brief ROW-> (square / 8) square = 56 → rank = 7*/
 /*	COL-> (square % 8) square = 59 → file = 3*/
@@ -64,7 +83,7 @@ int mirror(int square) {
 }
 
 /*
-How to Improve Your Evaluation Function
+How to Improve Evaluation Function
 
     Pawn Chains
         *Add a bonus for connected pawns.
@@ -85,76 +104,112 @@ How to Improve Your Evaluation Function
     Tactics (Pins, Forks, Batteries)
         *Detect if a piece is pinned and penalize that side.
         *Detect forks and add a bonus for the attacker.
-        *Detect batteries (e.g., Queen and Bishop on b2-g7) and increase evaluation.
+        *Detect batteries (e.g., Queen and Bishop on b2-g7) and increase evaluation.                                                                              
 */
 
  /*Returns 1 if there is a friendly pawn diagonally adjacent*/
 int is_pawn_connected(const struct position *pos, int square, int color) {
    
     int file = square % 8;
+	int mult = 1;
 
-    /* Check diagonal left except a*/
     if (file > 0) {
         int left_diagonal; /* -9 for white, +7 for black*/
 		if (color == WHITE)
 		{
 			left_diagonal = square - 9;
 			if (pos->board[left_diagonal] == WHITE)
-				return 1;
-		}
-				
+				return 10;
+			mult = -1;
+		}	
 		else if (color == BLACK)
 		{
 			left_diagonal = square + 7;
 			if (pos->board[left_diagonal] == BLACK)
-				return 1;
+				return -10;
 		}
-				
     }
-
-    /* Check diagonal right except h*/
     if (file < 7) {
         int right_diagonal;  /* -7 for white, +9 for black */
 		if (color == WHITE)
 		{
 			right_diagonal = square - 7;
 			if (pos->board[right_diagonal] == WHITE)
-				return 1;
+				return 10;
+			mult = -1;
 		}
 		else if (color == BLACK )
 		{
 			right_diagonal = square + 9;
 			if (pos->board[right_diagonal] == BLACK)
-				return 1;
+				return -10;
 		}
     }
-    return 0;
+    return 15 * mult;
 }
 
+/*Doubled pawns → -10 points per extra pawn on a file.*/
+int	pawn_doubled_or_isolated(const struct position *pos)
+{
+	int pawn_count[8] = {0};
+	int file = 0;
+	int square;
+	int mult = 1;
+	int score = 0;
+	int check_left = 0;
+	int check_right = 0;
 
+	for (square = 0; square < 64; square++) {
+		if (pos->board[square] == PAWN)
+		{	
+			file = FILE(square);
+			pawn_count[file]++;
+		}
+	}
+	file = 0;
+	while (file < 8)
+	{
+		if (pawn_count[file] > 1)
+			score = (-10 * pawn_count[file]);
+		if (pawn_count[file] > 0)
+		{
+			if(file > 0)
+			{
+				if (pawn_count[file - 1] > 0)
+					check_left = 1;
+				else
+					check_left = 0;
+			}
+			if (file < 7)
+			{
+				if (pawn_count[file + 1] > 0)
+					check_left = 1;
+				else
+					check_left = 0;
+			}
+			if (check_right == 0 && check_right == 0)
+				score -= 15;
+		}
+		file++;
+    }
+	if (pos->side_to_move == BLACK)
+		mult = -1;
+	return score * mult;
+}
+/*
+Diagonally adjacent -> 
+Doubled pawns → -10 points per extra pawn on a file.
+Isolated pawns → -15 points if no adjacent pawns.
+*/
 int evaluate_pawn(const struct position *pos, int color) {
     int score = 0;
 	int square;
 
     for (square = 0; square < 64; square++) {
-        if (color == WHITE) {
-            if (is_pawn_connected(pos, square, color)) {
-                score += 10; 
-            } else {
-                score -= 15;
-            }
-        }
-        if (color == BLACK) {
-            if (is_pawn_connected(pos, square, color)) {
-                score -= 10; /* for Black, this is negative*/
-            } else {
-                score += 15;
-            }
-        }
+		score += is_pawn_connected(pos, square, color) + pawn_doubled_or_isolated(pos);
     }
     return score;
 }
-
 
 int	common_pattern(const struct position *pos, int piece, int color)
 {
@@ -166,8 +221,6 @@ int	common_pattern(const struct position *pos, int piece, int color)
 		case QUEEN:
 			break;
 		case ROOK:
-			break;
-		case KNIGHT:
 			break;
 		case KING:
 			break;
@@ -224,7 +277,7 @@ int evaluate(const struct position *pos) {
 				score[COLOR(piece)] += piece_value[ROOK] + rook_table[square_val];
 				break;
 			case KNIGHT:
-				score[COLOR(piece)] += piece_value[KNIGHT] + knight_table[square_val];
+				score[COLOR(piece)] += piece_value[KNIGHT] + knight_table[square_val] + knight_bonus[square_val] + knight_penalty[square];
 				break;
 			case KING:
 				score[COLOR(piece)] += piece_value[KING] + king_table[square_val];
