@@ -101,7 +101,7 @@ struct search_result minimax(const struct position *pos, int depth, int alpha, i
 struct move search(const struct search_info *info) {
 	int alpha = INT_MIN;
 	int beta = INT_MAX;
-	int depth = 6;
+	int depth = 4;
 	int maximizing_player = (info->pos->side_to_move == WHITE);
 
 	/*if (info->time[WHITE] < info->time[BLACK] && we are white)
