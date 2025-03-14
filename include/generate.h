@@ -41,6 +41,5 @@ size_t generate_pseudo_legal_moves(const struct position *pos, struct move *move
 /* https://www.chessprogramming.org/Check                                    */
 /* https://www.chessprogramming.org/Double_Check                             */
 size_t generate_legal_moves(const struct position *pos, struct move *moves);
-size_t generate_opening_move(struct move *moves);
 
 #endif

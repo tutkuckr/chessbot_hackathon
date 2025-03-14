@@ -14,19 +14,6 @@ static int add_offset(int square, int file_offset, int rank_offset) {
 	}
 }
 
-//size_t generate_opening_move(struct move *moves)
-//{
-//	size_t count = 0;
-
-//	moves[count++] = make_move(12, 28, NO_TYPE);
-//	moves[count++] = make_move(52, 36, NO_TYPE);
-//	moves[count++] = make_move(57, 53, NO_TYPE);
-//	moves[count++] = make_move(58, 42, NO_TYPE);
-//	moves[count++] = make_move(60, 53, NO_TYPE);
-
-//	return count;
-//}
-
 /* generate a pawn move, taking into account promotions. returns the number  */
 /* of moves generated.                                                       */
 static size_t generate_pawn_move(const struct position *pos, struct move *moves, int from_square, int to_square) {
@@ -219,44 +206,16 @@ size_t generate_pseudo_legal_moves(const struct position *pos, struct move *move
 	return count;
 }
 
-static int is_capture(const struct position *pos, struct move move)
-{
-	// Check en passant captures
-	if (TYPE(pos->board[move.from_square]) == PAWN && 
-		move.to_square == pos->en_passant_square) 
-		return 1;
-	// Check regular captures
-	return (pos->board[move.to_square] != NO_PIECE && 
-		COLOR(pos->board[move.to_square]) != pos->side_to_move);
-}
-
 size_t generate_legal_moves(const struct position *pos, struct move *moves) {
-	struct move all_legal_moves[MAX_MOVES];
-	size_t legal_count = 0;
-	size_t capture_count = 0;
-	size_t i;
+	size_t pseudo_legal_count = generate_pseudo_legal_moves(pos, moves);
+	size_t index;
+	size_t count = 0;
 
-	// Generate all pseudo-legal moves into a temporary array
-	struct move pseudo_moves[MAX_MOVES];
-	size_t pseudo_count = generate_pseudo_legal_moves(pos, pseudo_moves);
+	for (index = 0; index < pseudo_legal_count; index++) {
+		if (is_legal(pos, moves[index])) {
+			moves[count++] = moves[index];
+		}
+	}
 
-	// Filter legal moves into `all_legal_moves`
-	for (i = 0; i < pseudo_count; i++) 
-	{
-		if (is_legal(pos, pseudo_moves[i]))
-			all_legal_moves[legal_count++] = pseudo_moves[i];
-	}
-	// Split captures and non-captures
-	for (i = 0; i < legal_count; i++)
-	{
-		if (is_capture(pos, all_legal_moves[i])) // Add captures to the start of the `moves` array
-			moves[capture_count++] = all_legal_moves[i];
-	}
-	// Append non-captures after the captures
-	size_t non_capture_idx = capture_count;
-	for (i = 0; i < legal_count; i++) {
-		if (!is_capture(pos, all_legal_moves[i]))
-			moves[non_capture_idx++] = all_legal_moves[i];
-	}
-	return (legal_count);
+	return count;
 }
