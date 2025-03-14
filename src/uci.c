@@ -155,7 +155,7 @@ static void uci_go(const struct position *pos, char *token, char *store) {
 	printf("bestmove %s\n", buffer);
 }
 
-void uci_run(const char *name, const char *author) {
+void uci_run() {
 	char *line;
 	int quit = 0;
 	struct position pos;
@@ -170,8 +170,8 @@ void uci_run(const char *name, const char *author) {
 			if (!strcmp(token, "quit")) {
 				quit = 1;
 			} else if (!strcmp(token, "uci")) {
-				printf("id name %s\n", name);
-				printf("id author %s\n", author);
+				printf("id name %s\n", "Team AlPaCa");
+				printf("id author %s\n", "aalombro tcakir-y yulpark");
 				printf("uciok\n");
 			} else if (!strcmp(token, "isready")) {
 				printf("readyok\n");
