@@ -81,6 +81,46 @@ int	psq_calc(int piece, int square)
 	}
 }
 
+int is_pawn_connected(const struct position *pos, int square, int color) {
+   
+    int file = square % 8;
+	int mult = 1;
+
+    if (file > 0) {
+        int left_diagonal; /* -9 for white, +7 for black*/
+		if (color == WHITE)
+		{
+			left_diagonal = square - 9;
+			if (pos->board[left_diagonal] == WHITE)
+				return 10;
+			mult = -1;
+		}	
+		else if (color == BLACK)
+		{
+			left_diagonal = square + 7;
+			if (pos->board[left_diagonal] == BLACK)
+				return -10;
+		}
+    }
+    if (file < 7) {
+        int right_diagonal;  /* -7 for white, +9 for black */
+		if (color == WHITE)
+		{
+			right_diagonal = square - 7;
+			if (pos->board[right_diagonal] == WHITE)
+				return 10;
+			mult = -1;
+		}
+		else if (color == BLACK )
+		{
+			right_diagonal = square + 9;
+			if (pos->board[right_diagonal] == BLACK)
+				return -10;
+		}
+    }
+    return 15 * mult;
+}
+
 int	pawn_doubled_or_isolated(const struct position *pos, int color)
 {
 	int pawn_count[8] = {0};
@@ -111,7 +151,6 @@ int	pawn_doubled_or_isolated(const struct position *pos, int color)
 	return score;
 }
 
-
 int evaluate(const struct position *pos) {
 	int score[2] = { 0, 0 };
     int square;
@@ -132,7 +171,9 @@ int evaluate(const struct position *pos) {
 			score[BLACK] += piece_val + psq_val;
 		}
 	}
-	score[WHITE] += pawn_doubled_or_isolated(pos, WHITE);
-    score[BLACK] -= pawn_doubled_or_isolated(pos, BLACK);
+	if (pos->side_to_move == WHITE)
+		score[WHITE] += pawn_doubled_or_isolated(pos, WHITE) + is_pawn_connected(pos, square, WHITE);
+	if (pos->side_to_move == BLACK)
+		score[BLACK] = score[BLACK] - pawn_doubled_or_isolated(pos, BLACK) + is_pawn_connected(pos, square, BLACK);
 	return (score[pos->side_to_move] - score[1 - pos->side_to_move]);
 }
